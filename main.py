@@ -6,9 +6,7 @@
 import ctypes as ct
 import pandas as pd
 import numpy as np
-import random
-import csv
-import sys
+import random, csv, sys, os
 
 import classes_water as ENC
 import classes_power as ODC
@@ -22,6 +20,8 @@ import win32com.client
 # makepy.main()
 
 def main(stoch_num):
+	os_username = os.getlogin()
+
 	csv_curve = pd.read_csv('./data_water/network-water/2000curve.csv', sep=',', header=1, index_col=None, dtype=np.float32)
 	csv_junction = pd.read_csv('./data_water/network-water/2100junction.csv', sep=',', header=1, index_col=None, dtype=np.float32)
 	csv_reservoir = pd.read_csv('./data_water/network-water/2101reservoir.csv', sep=',', header=1, index_col=None, dtype=np.float32)
@@ -185,7 +185,7 @@ def main(stoch_num):
 						object.randomSwitching()
 
 	def run_EPANET():
-		filedir = 'C:/Users/brandon.t.gorman/Documents/RISE Code/data_water/en-inputs/en-input.inp'
+		filedir = 'C:/Users/'+os_username+'/Documents/git/ASU-power-water-interdependency/data_water/en-inputs/en-input.inp'
 		with open(filedir, 'w', newline='\n') as csvfile:
 			writer = csv.writer(csvfile, delimiter=' ')
 			templist = ['[TITLE]']
@@ -294,11 +294,11 @@ def main(stoch_num):
 			templist=['[END]']
 			writer.writerow(templist)
 
-		epalib = ct.cdll.LoadLibrary('C:/Users/brandon.t.gorman/Documents/RISE Code/data_water/epanet2mingw64.dll')
+		epalib = ct.cdll.LoadLibrary('C:/Users/'+os_username+'/Documents/git/ASU-power-water-interdependency/data_water/epanet2mingw64.dll')
 
 		# Byte objects
 		en_input_file = ct.c_char_p(filedir.encode('utf-8'))
-		en_report_file = ct.c_char_p('C:/Users/brandon.t.gorman/Documents/RISE Code/data_water/en-outputs/out.rpt'.encode('utf-8'))
+		en_report_file = ct.c_char_p(str('C:/Users/'+os_username+'/Documents/git/ASU-power-water-interdependency/data_water/en-outputs/out.rpt').encode('utf-8'))
 		en_byte_file = ct.c_char_p(''.encode('utf-8'))
 
 		# Send strings as char* to the epalib function
@@ -367,7 +367,7 @@ def main(stoch_num):
 
 		dssText.Command = 'Clear'
 
-		dssText.Command = 'Set DataPath=\'C:\\Users\\brandon.t.gorman\\Documents\\OpenDSS'
+		dssText.Command = 'Set DataPath=\'C:\\Users\\'+os_username+'\\Documents\\OpenDSS'
 		dssText.Command = 'Set DefaultBaseFrequency=60'
 
 		for object in object_list:
@@ -397,16 +397,23 @@ def main(stoch_num):
 		for object in object_list:
 			object.readAllDSSOutputs(dssCkt, dssActvElem, dssActvBus, variant_buses, variant_voltages_mag, variant_voltages_pu, variant_currents, variant_powers)
 
+		input_list_continuous = []
+		input_list_categorical = []
 		input_tensor_continuous = np.empty([0,0], dtype=np.float32).flatten()
 		input_tensor_categorical = np.empty([0,0], dtype=np.float32).flatten()
 		for object in object_list:
-			tensor_continuous, tensor_categorical = object.convertToInputTensor()
+			list_continuous, list_categorical, tensor_continuous, tensor_categorical = object.convertToInputTensor()
+			input_list_continuous = input_list_continuous + list_continuous
+			input_list_categorical = input_list_categorical + list_categorical
 			input_tensor_continuous = np.concatenate((input_tensor_continuous, tensor_continuous), axis=0)
 			input_tensor_categorical = np.concatenate((input_tensor_categorical, tensor_categorical), axis=0)
 
+		output_list = []
 		output_tensor = np.empty([0,0], dtype=np.float32).flatten()
 		for object in object_list:
-			output_tensor = np.concatenate((output_tensor, object.convertToOutputTensor()), axis=0)
+			o_list, o_tensor = object.convertToOutputTensor()
+			output_list = output_list + o_list
+			output_tensor = np.concatenate((output_tensor, o_tensor), axis=0)
 
 		return input_tensor_continuous, input_tensor_categorical, output_tensor
 
@@ -423,11 +430,11 @@ def main(stoch_num):
 	input_tensor_categorical = np.concatenate((input_tensor_categorical, input_tensor_categorical1), axis=0)
 	output_tensor = np.concatenate((output_tensor, output_tensor1), axis=0)
 
-	with open('C:/Users/brandon.t.gorman/Documents/data_power/input_tensor_continuous.csv', 'ab') as f:
+	with open('C:/Users/'+os_username+'/Documents/git/ASU-power-water-interdependency/outputs/input_tensor_continuous.csv', 'ab') as f:
 		np.savetxt(f, input_tensor_continuous[None, :], fmt='%0.6f', delimiter=' ', newline='\n')
-	with open('C:/Users/brandon.t.gorman/Documents/data_power/input_tensor_categorical.csv', 'ab') as f:
+	with open('C:/Users/'+os_username+'/Documents/git/ASU-power-water-interdependency/outputs/input_tensor_categorical.csv', 'ab') as f:
 		np.savetxt(f, input_tensor_categorical[None, :], fmt='%0.6f', delimiter=' ', newline='\n')
-	with open('C:/Users/brandon.t.gorman/Documents/data_power/output_tensor.csv', 'ab') as f:
+	with open('C:/Users/'+os_username+'/Documents/git/ASU-power-water-interdependency/outputs/output_tensor.csv', 'ab') as f:
 		np.savetxt(f, output_tensor[None, :], fmt='%0.6f', delimiter=' ', newline='\n')
 
 if __name__ == '__main__':

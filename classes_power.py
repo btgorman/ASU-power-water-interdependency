@@ -126,7 +126,7 @@ class XYCurve: #errors -1000 to -1024
 			# inputdf = self.convertToDataFrame()
 			# inputdf = inputdf[inputcols]
 			# return inputdf.values.flatten()
-			return [], np.empty([0, 0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
+			return [], [], np.empty([0, 0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
 		except:
 			print('Error: #-1009')
 			return -1009
@@ -192,7 +192,7 @@ class RegControl: #errors -1050 to -1074
 
 	def convertToInputTensor(self):
 		try:
-			return [], np.empty([0, 0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
+			return [], [], np.empty([0, 0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
 		except:
 			pass
 
@@ -283,7 +283,7 @@ class WireData: #errors -1100 to -1124
 
 	def convertToInputTensor(self):
 		try:
-			return [], np.empty([0, 0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
+			return [], [], np.empty([0, 0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
 		except:
 			return 0
 
@@ -420,7 +420,7 @@ class LineCode: #errors -1125 to -1149
 			# inputdf = self.convertToDataFrame()
 			# inputdf = inputdf[inputcols]
 			# return inputdf.values.flatten()
-			return [], np.empty([0, 0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
+			return [], [], np.empty([0, 0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
 		except:
 			print('Error: #-1132')
 			return -1132
@@ -533,7 +533,7 @@ class Bus: #errors -1150 to -1174
 			# inputdf = self.convertToDataFrame()
 			# inputdf = inputdf[inputcols]
 			# return inputdf.values.flatten()
-			return [], np.empty([0, 0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
+			return [], [], np.empty([0, 0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
 		except:
 			print('Error: #-1155')
 			return -1155
@@ -544,7 +544,7 @@ class Bus: #errors -1150 to -1174
 			outputcols = ['a_PU_voltage', 'b_PU_voltage', 'c_PU_voltage']
 			outputdf = self.convertToDataFrame()
 			outputdf = outputdf[outputcols]
-			return outputdf.values.flatten()
+			return [], outputdf.values.flatten()
 		except:
 			print('Error: #-1156')
 			return -1156
@@ -717,7 +717,7 @@ class VSource: #errors -1175 to -1199
 			# inputdf = self.convertToDataFrame()
 			# inputdf = inputdf[inputcols]
 			# return inputdf.values.flatten()
-			return np.empty([0, 0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
+			return [], [], np.empty([0, 0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
 		except:
 			print('Error: #-1182')
 			return -1182
@@ -728,7 +728,7 @@ class VSource: #errors -1175 to -1199
 			outputcols = ['a_PU_voltage', 'b_PU_voltage', 'c_PU_voltage', 'a_current', 'b_current', 'c_current', 'n_current']
 			outputdf = self.convertToDataFrame()
 			outputdf = outputdf[outputcols]
-			return outputdf.values.flatten()
+			return [], outputdf.values.flatten()
 		except:
 			print('Error: #-1183')
 			return -1183
@@ -946,7 +946,7 @@ class Generator: #errors -1200 to -1224
 			inputdf = self.convertToDataFrame()
 			inputdf_continuous = inputdf[input_col_continuous]
 			inputdf_categorization = inputdf[input_col_categorization]
-			return inputdf_continuous.values.flatten(), inputdf_categorization.values.flatten()
+			return [], [], inputdf_continuous.values.flatten(), inputdf_categorization.values.flatten()
 		except:
 			print('Error: #-1209')
 			return -1209
@@ -957,7 +957,7 @@ class Generator: #errors -1200 to -1224
 			outputcols = ['a_PU_voltage', 'b_PU_voltage', 'c_PU_voltage', 'a_current', 'b_current', 'c_current', 'n_current']
 			outputdf = self.convertToDataFrame()
 			outputdf = outputdf[outputcols]
-			return outputdf.values.flatten()
+			return [], outputdf.values.flatten()
 		except:
 			print('Error: #-1210')
 			return -1210
@@ -1207,7 +1207,7 @@ class Load: #errors -1225 to -1249
 			inputdf = self.convertToDataFrame()
 			inputdf_continuous = inputdf[input_col_continuous]
 			inputdf_categorization = inputdf[input_col_categorization]
-			return inputdf_continuous.values.flatten(), inputdf_categorization.values.flatten()
+			return [], [], inputdf_continuous.values.flatten(), inputdf_categorization.values.flatten()
 		except:
 			print('Error: #-1234')
 			return -1234
@@ -1218,7 +1218,7 @@ class Load: #errors -1225 to -1249
 			outputcols = ['a_PU_voltage', 'b_PU_voltage', 'c_PU_voltage', 'a_current', 'b_current', 'c_current', 'n_current']
 			outputdf = self.convertToDataFrame()
 			outputdf = outputdf[outputcols]
-			return outputdf.values.flatten()
+			return [], outputdf.values.flatten()
 		except:
 			print('Error: #-1235')
 			return -1235
@@ -1443,7 +1443,7 @@ class SolarPV: #errors -1250 to -1274
 			inputdf = self.convertToDataFrame()
 			inputdf_continuous = inputdf[input_col_continuous]
 			inputdf_categorization = inputdf[input_col_categorization]
-			return inputdf_continuous.values.flatten(), inputdf_categorization.values.flatten()
+			return [], [], inputdf_continuous.values.flatten(), inputdf_categorization.values.flatten()
 		except:
 			print('Error: #-1259')
 			return -1259
@@ -1454,7 +1454,7 @@ class SolarPV: #errors -1250 to -1274
 			outputcols = ['a_PU_voltage', 'b_PU_voltage', 'c_PU_voltage', 'a_current', 'b_current', 'c_current', 'n_current']
 			outputdf = self.convertToDataFrame()
 			outputdf = outputdf[outputcols]
-			return outputdf.values.flatten()
+			return [], outputdf.values.flatten()
 		except:
 			print('Error: #-1260')
 			return -1260
@@ -1672,13 +1672,13 @@ class WindTurbine: #errors -1275 to -1299
 
 	def convertToInputTensor(self):
 		try:
-			return np.empty([0, 0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
+			return [], [], np.empty([0, 0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
 		except:
 			pass
 
 	def convertToOutputTensor(self):
 		try:
-			return np.empty([0, 0], dtype=np.float32).flatten()
+			return [], np.empty([0, 0], dtype=np.float32).flatten()
 		except:
 			pass
 
@@ -1868,13 +1868,13 @@ class DirectConnection: #errors -1400 to -1424
 
 	def convertToInputTensor(self):
 		try:
-			return np.empty([0, 0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
+			return [], [], np.empty([0, 0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
 		except:
 			pass
 
 	def convertToOutputTensor(self):
 		try:
-			return np.empty([0, 0], dtype=np.float32).flatten()
+			return [], np.empty([0, 0], dtype=np.float32).flatten()
 		except:
 			pass
 
@@ -2096,7 +2096,7 @@ class Cable: #errors -1425 to -1449
 			input_col_categorization = ['operational_status_a', 'operational_status_b', 'operational_status_c']
 			inputdf = self.convertToDataFrame()
 			inputdf_categorization = inputdf[input_col_categorization]
-			return np.empty([0,0], dtype=np.float32).flatten(), inputdf_categorization.values.flatten()
+			return [], [], np.empty([0,0], dtype=np.float32).flatten(), inputdf_categorization.values.flatten()
 		except:
 			print('Error: #-1432')
 			return -1432
@@ -2107,7 +2107,7 @@ class Cable: #errors -1425 to -1449
 			outputcols = ['a_PU_capacity', 'b_PU_capacity', 'c_PU_capacity']
 			outputdf = self.convertToDataFrame()
 			outputdf = outputdf[outputcols]
-			return outputdf.values.flatten()
+			return [], outputdf.values.flatten()
 		except:
 			print('Error: #-1433')
 			return -1433
@@ -2379,13 +2379,13 @@ class OverheadLine: #errors -1450 to -1474
 
 	def convertToInputTensor(self):
 		try:
-			return np.empty([0, 0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
+			return [], [], np.empty([0, 0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
 		except:
 			pass
 
 	def convertToOutputTensor(self):
 		try:
-			return np.empty([0, 0], dtype=np.float32).flatten()
+			return [], np.empty([0, 0], dtype=np.float32).flatten()
 		except:
 			pass
 
@@ -2646,7 +2646,7 @@ class TwoWindingTransformer: #errors -1475 to -1499
 			inputdf = self.convertToDataFrame()
 			inputdf_continuous = inputdf[input_col_continuous]
 			inputdf_categorization = inputdf[input_col_categorization]
-			return inputdf_continuous.values.flatten(), inputdf_categorization.values.flatten()
+			return [], [], inputdf_continuous.values.flatten(), inputdf_categorization.values.flatten()
 		except:
 			print('Error: #-1484')
 			return -1484
@@ -2657,7 +2657,7 @@ class TwoWindingTransformer: #errors -1475 to -1499
 			outputcols = ['PU_capacity']
 			outputdf = self.convertToDataFrame()
 			outputdf = outputdf[outputcols]
-			return outputdf.values.flatten()
+			return [], outputdf.values.flatten()
 		except:
 			print('Error: #-1485')
 			return -1485
@@ -2907,7 +2907,7 @@ class Capacitor: #errors -1500 to -1524
 			input_col_categorization = ['operational_status']
 			inputdf = self.convertToDataFrame()
 			inputdf_categorization = inputdf[input_col_categorization]
-			return np.empty([0,0], dtype=np.float32).flatten(), inputdf_categorization.values.flatten()
+			return [], [], np.empty([0,0], dtype=np.float32).flatten(), inputdf_categorization.values.flatten()
 		except:
 			print('Error: #-1507')
 			return -1507
@@ -2918,7 +2918,7 @@ class Capacitor: #errors -1500 to -1524
 			outputcols = ['PU_capacity']
 			outputdf = self.convertToDataFrame()
 			outputdf = outputdf[outputcols]
-			return outputdf.values.flatten()
+			return [], outputdf.values.flatten()
 		except:
 			print('Error: #-1508')
 			return -1508
@@ -3025,13 +3025,13 @@ class Reactor: #errors -1525 to -1549
 
 	def convertToInputTensor(self):
 		try:
-			return np.empty([0, 0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
+			return [], [], np.empty([0, 0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
 		except:
 			pass
 
 	def convertToOutputTensor(self):
 		try:
-			return np.empty([0, 0], dtype=np.float32).flatten()
+			return [], np.empty([0, 0], dtype=np.float32).flatten()
 		except:
 			pass
 
