@@ -148,14 +148,14 @@ class Curve:
 			# inputcols = ['ID', 'type', 'x_value', 'y_value']
 			# inputdf = self.convertToDataFrame()
 			# inputdf = inputdf[inputcols]
-			return np.empty([0,0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
+			return [], [], np.empty([0,0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
 		except:
 			print('WATER ERROR in Curve4')
 			return -1
 
 	def convertToOutputTensor(self):
 		try:
-			return np.empty([0,0], dtype=np.float32).flatten()
+			return [], np.empty([0,0], dtype=np.float32).flatten()
 		except:
 			print('WATER ERROR in Curve5')
 			return -1
@@ -287,20 +287,33 @@ class Junction:
 
 	def convertToInputTensor(self):
 		try:
+			input_list_continuous = []
+			input_list_categorical = []
 			input_col_continuous = ['base_demand']
+
+			for row in self.matrix:
+				for elem in input_col_continuous:
+					input_list_continuous.append('Junction_' + str(int(row[Junction.ID])) + '_' + elem)
+
 			inputdf = self.convertToDataFrame()
 			inputdf_continuous = inputdf[input_col_continuous]
-			return inputdf_continuous.values.flatten(), np.empty([0,0], dtype=np.float32).flatten()
+			return input_list_continuous, input_list_categorical, inputdf_continuous.values.flatten(), np.empty([0,0], dtype=np.float32).flatten()
 		except:
 			print('WATER ERROR in Junction4')
 			return -1
 
 	def convertToOutputTensor(self):
 		try:
-			outputcols = ['head', 'percent_demand', 'percent_pressure', 'quality']
+			output_list = []
+			output_col = ['head', 'percent_demand', 'percent_pressure', 'quality']
+
+			for row in self.matrix:
+				for elem in output_col:
+					output_list .append('Junction_' + str(int(row[Junction.ID])) + '_' + elem)
+
 			outputdf = self.convertToDataFrame()
-			outputdf = outputdf[outputcols]
-			return outputdf.values.flatten()
+			outputdf = outputdf[output_col]
+			return output_list, outputdf.values.flatten()
 		except:
 			print('WATER ERROR in Junction5')
 			return -1
@@ -408,17 +421,23 @@ class Reservoir:
 
 	def convertToInputTensor(self):
 		try:
-			return np.empty([0,0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
+			return [], [], np.empty([0,0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
 		except:
 			print('WATER ERROR in Reservoir4')
 			return -1
 
 	def convertToOutputTensor(self):
 		try:
-			outputcols = ['demand', 'head', 'pressure']
+			output_list = []
+			output_col = ['demand', 'head', 'pressure']
+
+			for row in self.matrix:
+				for elem in output_col:
+					output_list.append('Reservoir_' + str(int(row[Reservoir.ID])) + '_' + elem)
+
 			outputdf = self.convertToDataFrame()
-			outputdf = outputdf[outputcols]
-			return outputdf.values.flatten()
+			outputdf = outputdf[output_col]
+			return output_list, outputdf.values.flatten()
 		except:
 			print('WATER ERROR in Reservoir5')
 			return -1
@@ -526,17 +545,23 @@ class Tank:
 
 	def convertToInputTensor(self):
 		try:
-			return np.empty([0,0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
+			return [], [], np.empty([0,0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
 		except:
 			print('WATER ERROR in Tank4')
 			return -1
 
 	def convertToOutputTensor(self):
 		try:
-			outputcols = ['demand', 'head', 'percent_level', 'pressure', 'quality']
+			output_list = []
+			output_col = ['demand', 'head', 'percent_level', 'pressure', 'quality']
+			
+			for row in self.matrix:
+				for elem in output_col:
+					output_list.append('Tank_' + str(int(row[Tank.ID])) + '_' + elem)
+
 			outputdf = self.convertToDataFrame()
-			outputdf = outputdf[outputcols]
-			return outputdf.values.flatten()
+			outputdf = outputdf[output_col]
+			return output_list, outputdf.values.flatten()
 		except:
 			print('WATER ERROR in Tank5')
 			return -1
@@ -659,20 +684,33 @@ class Pipe:
 
 	def convertToInputTensor(self):
 		try:
-			input_col_categorization = ['operational_status', 'cv_status']
+			input_list_continuous = []
+			input_list_categorical = []
+			input_col_categorical = ['operational_status', 'cv_status']
+
+			for row in self.matrix:
+				for elem in input_col_categorical:
+					input_list_categorical.append('Pipe_' + str(int(row[Pipe.ID])) + '_' + elem)
+
 			inputdf = self.convertToDataFrame()
-			inputdf_categorization = inputdf[input_col_categorization]
-			return np.empty([0,0], dtype=np.float32).flatten(), inputdf_categorization.values.flatten() 
+			inputdf_categorical = inputdf[input_col_categorical]
+			return input_list_continuous, input_list_categorical, np.empty([0,0], dtype=np.float32).flatten(), inputdf_categorical.values.flatten() 
 		except:
 			print('WATER ERROR in Pipe4')
 			return -1
 
 	def convertToOutputTensor(self):
 		try:
-			outputcols = ['flow', 'headloss', 'percent_velocity']
+			output_list = []
+			output_col = ['flow', 'headloss', 'percent_velocity']
+
+			for row in self.matrix:
+				for elem in output_col:
+					output_list.append('Pipe_' + str(int(row[Pipe.ID])) + '_' + elem)
+
 			outputdf = self.convertToDataFrame()
-			outputdf = outputdf[outputcols]
-			return outputdf.values.flatten()
+			outputdf = outputdf[output_col]
+			return output_list, outputdf.values.flatten()
 		except:
 			print('WATER ERROR in Pipe5')
 			return -1
@@ -797,22 +835,37 @@ class Pump:
 
 	def convertToInputTensor(self):
 		try:
+			input_list_continuous = []
+			input_list_categorical = []
 			input_col_continuous = ['speed']
-			input_col_categorization = ['operational_status']
+			input_col_categorical = ['operational_status']
+
+			for row in self.matrix:
+				for elem in input_col_continuous:
+					input_list_continuous.append('Pump_' + str(int(row[Pump.ID])) + '_' + elem)
+				for elem in input_col_categorical:
+					input_list_categorical.append('Pump_' + str(int(row[Pump.ID])) + '_' + elem)
+
 			inputdf = self.convertToDataFrame()
 			inputdf_continuous = inputdf[input_col_continuous]
-			inputdf_categorization = inputdf[input_col_categorization]
-			return inputdf_continuous.values.flatten(), inputdf_categorization.values.flatten() 
+			inputdf_categorical = inputdf[input_col_categorical]
+			return input_list_continuous, input_list_categorical, inputdf_continuous.values.flatten(), inputdf_categorical.values.flatten() 
 		except:
 			print('WATER ERROR in Pump4')
 			return -1
 
 	def convertToOutputTensor(self):
 		try:
-			outputcols = ['power_consumption', 'flow', 'headloss', 'velocity']
+			output_list = []
+			output_col = ['power_consumption', 'flow', 'headloss', 'velocity']
+
+			for row in self.matrix:
+				for elem in output_col:
+					output_list.append('Pump_' + str(int(row[Pump.ID])) + '_' + elem)
+
 			outputdf = self.convertToDataFrame()
-			outputdf = outputdf[outputcols]
-			return outputdf.values.flatten()
+			outputdf = outputdf[output_col]
+			return output_list, outputdf.values.flatten()
 		except:
 			print('WATER ERROR in Pump5')
 			return -1
@@ -936,14 +989,14 @@ class Valve:
 
 	def convertToInputTensor(self):
 		try:
-			return np.empty([0,0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
+			return [], [], np.empty([0,0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
 		except:
 			print('WATER ERROR in Valve5')
 			return -1
 
 	def convertToOutputTensor(self):
 		try:
-			return np.empty([0,0], dtype=np.float32).flatten()
+			return [], np.empty([0,0], dtype=np.float32).flatten()
 		except:
 			print('WATER ERROR in Valve6')
 			return -1

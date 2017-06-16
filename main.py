@@ -197,7 +197,7 @@ def main(stoch_num):
 						object.randomSwitching()
 
 	def run_EPANET():
-		filedir = 'C:/Users/'+os_username+'/Documents/git/ASU-power-water-interdependency/data_water/en-inputs/en-input.inp'
+		filedir = 'C:/Users/'+os_username+'/Documents/git/RISE-power-water-ss/data_water/en-inputs/en-input.inp'
 		with open(filedir, 'w', newline='\n') as csvfile:
 			writer = csv.writer(csvfile, delimiter=' ')
 			templist = ['[TITLE]']
@@ -306,11 +306,11 @@ def main(stoch_num):
 			templist=['[END]']
 			writer.writerow(templist)
 
-		epalib = ct.cdll.LoadLibrary('C:/Users/'+os_username+'/Documents/git/ASU-power-water-interdependency/data_water/epanet2mingw64.dll')
+		epalib = ct.cdll.LoadLibrary('C:/Users/'+os_username+'/Documents/git/RISE-power-water-ss/data_water/epanet2mingw64.dll')
 
 		# Byte objects
 		en_input_file = ct.c_char_p(filedir.encode('utf-8'))
-		en_report_file = ct.c_char_p(str('C:/Users/'+os_username+'/Documents/git/ASU-power-water-interdependency/data_water/en-outputs/out.rpt').encode('utf-8'))
+		en_report_file = ct.c_char_p(str('C:/Users/'+os_username+'/Documents/git/RISE-power-water-ss/data_water/en-outputs/out.rpt').encode('utf-8'))
 		en_byte_file = ct.c_char_p(''.encode('utf-8'))
 
 		# Send strings as char* to the epalib function
@@ -352,18 +352,25 @@ def main(stoch_num):
 		if errorcode != 0:
 			print(7, 'ERRORCODE is', errorcode)
 
+		input_list_continuous = []
+		input_list_categorical = []
 		input_tensor_continuous = np.empty([0,0], dtype=np.float32).flatten()
 		input_tensor_categorical = np.empty([0,0], dtype=np.float32).flatten()
 		for object in w_object_list:
-			tensor_continuous, tensor_categorical = object.convertToInputTensor()
+			list_continuous, list_categorical, tensor_continuous, tensor_categorical = object.convertToInputTensor()
+			input_list_continuous = input_list_continuous + list_continuous
+			input_list_categorical = input_list_categorical + list_categorical
 			input_tensor_continuous = np.concatenate((input_tensor_continuous, tensor_continuous), axis=0)
 			input_tensor_categorical = np.concatenate((input_tensor_categorical, tensor_categorical), axis=0)
 
+		output_list = []
 		output_tensor = np.empty([0,0], dtype=np.float32).flatten()
 		for object in w_object_list:
-			output_tensor = np.concatenate((output_tensor, object.convertToOutputTensor()), axis=0)
+			o_list, o_tensor = object.convertToOutputTensor()
+			output_list = output_list + o_list
+			output_tensor = np.concatenate((output_tensor, o_tensor), axis=0)
 
-		return input_tensor_continuous, input_tensor_categorical, output_tensor
+		return input_list_continuous, input_list_categorical, output_list, input_tensor_continuous, input_tensor_categorical, output_tensor
 
 	def run_OpenDSS(dss_debug):
 		# SET SOURCEBUS
@@ -427,29 +434,52 @@ def main(stoch_num):
 			output_list = output_list + o_list
 			output_tensor = np.concatenate((output_tensor, o_tensor), axis=0)
 
-		return input_tensor_continuous, input_tensor_categorical, output_tensor
+		return input_list_continuous, input_list_categorical, output_list, input_tensor_continuous, input_tensor_categorical, output_tensor
 
+	# Simulation step 1: calculate uniform probability for objects given number of switches/dials in the modeled power and water networks
 	calc_probabilities()
 
+	# Simulation step 2: stochastically change object controls and stochastially choose a random component for switching
 	run_stochasticity(stoch_num)
 
-	input_tensor_continuous, input_tensor_categorical, _ = run_OpenDSS(0)
-	input_tensor_continuous1, input_tensor_categorical1, _ = run_EPANET()
-	_, _, output_tensor = run_OpenDSS(0)
-	_, _, output_tensor1 = run_EPANET()
+	# Simulation step 3: run power and water interdependency simulation
+	input_list_continuous, input_list_categorical, _, input_tensor_continuous, input_tensor_categorical, _ = run_OpenDSS(0)
+	input_list_continuous1, input_list_categorical1, _, input_tensor_continuous1, input_tensor_categorical1, _ = run_EPANET()
+	_, _, output_list, _, _, output_tensor = run_OpenDSS(0)
+	_, _, output_list1, _, _, output_tensor1 = run_EPANET()
+
+	# Format data structures
+	input_list_continuous = input_list_continuous + input_list_continuous1
+	input_list_categorical = input_list_categorical + input_list_categorical1
+	output_list = output_list + output_list1
 
 	input_tensor_continuous = np.concatenate((input_tensor_continuous, input_tensor_continuous1), axis=0)
 	input_tensor_categorical = np.concatenate((input_tensor_categorical, input_tensor_categorical1), axis=0)
 	output_tensor = np.concatenate((output_tensor, output_tensor1), axis=0)
 
-	with open('C:/Users/'+os_username+'/Documents/git/ASU-power-water-interdependency/outputs/input_tensor_continuous.csv', 'ab') as f:
+	# Write data structures
+	if write_cols:
+		with open('C:/Users/'+os_username+'/Documents/git/RISE-power-water-ss/outputs/input_list_continuous_columns.csv', 'w') as f:
+			writer = csv.writer(f, delimiter=',')
+			writer.writerow(input_list_continuous)
+		with open('C:/Users/'+os_username+'/Documents/git/RISE-power-water-ss/outputs/input_list_categorical_columns.csv', 'w') as f:
+			writer = csv.writer(f, delimiter=',')
+			writer.writerow(input_list_categorical)
+		with open('C:/Users/'+os_username+'/Documents/git/RISE-power-water-ss/outputs/output_list_columns.csv', 'w') as f:
+			writer = csv.writer(f, delimiter=',')
+			writer.writerow(output_list)
+
+	with open('C:/Users/'+os_username+'/Documents/git/RISE-power-water-ss/outputs/input_tensor_continuous.csv', 'ab') as f:
 		np.savetxt(f, input_tensor_continuous[None, :], fmt='%0.6f', delimiter=' ', newline='\n')
-	with open('C:/Users/'+os_username+'/Documents/git/ASU-power-water-interdependency/outputs/input_tensor_categorical.csv', 'ab') as f:
+	with open('C:/Users/'+os_username+'/Documents/git/RISE-power-water-ss/outputs/input_tensor_categorical.csv', 'ab') as f:
 		np.savetxt(f, input_tensor_categorical[None, :], fmt='%0.6f', delimiter=' ', newline='\n')
-	with open('C:/Users/'+os_username+'/Documents/git/ASU-power-water-interdependency/outputs/output_tensor.csv', 'ab') as f:
+	with open('C:/Users/'+os_username+'/Documents/git/RISE-power-water-ss/outputs/output_tensor.csv', 'ab') as f:
 		np.savetxt(f, output_tensor[None, :], fmt='%0.6f', delimiter=' ', newline='\n')
+
+	# End
 
 if __name__ == '__main__':
 	stoch_factor = int(sys.argv[1])
 	stoch_steps = 4
-	main(stoch_steps * stoch_factor)
+	write_cols = False # Will write column names in a seperate file, need to do only once becaues column names do not change
+	main(stoch_steps * stoch_factor, write_cols)

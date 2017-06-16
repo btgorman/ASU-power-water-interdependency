@@ -134,10 +134,6 @@ class XYCurve: #errors -1000 to -1024
 
 	def convertToInputTensor(self):
 		try:
-			# inputcols = ['x_1_coordinate', 'x_2_coordinate', 'x_3_coordinate', 'x_4_coordinate', 'x_5_coordinate', 'y_1_coordinate', 'y_2_coordinate', 'y_3_coordinate', 'y_4_coordinate', 'y_5_coordinate']
-			# inputdf = self.convertToDataFrame()
-			# inputdf = inputdf[inputcols]
-			# return inputdf.values.flatten()
 			return [], [], np.empty([0, 0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
 		except:
 			print('Error: #-1009')
@@ -428,10 +424,6 @@ class LineCode: #errors -1125 to -1149
 
 	def convertToInputTensor(self):
 		try:
-			# inputcols = ['normal_amps', 'number_of_phases', 'R11', 'R21', 'R22', 'R31', 'R32', 'R33', 'X11', 'X21', 'X22', 'X31', 'X32', 'X33', 'C11', 'C21', 'C22', 'C31', 'C32', 'C33']
-			# inputdf = self.convertToDataFrame()
-			# inputdf = inputdf[inputcols]
-			# return inputdf.values.flatten()
 			return [], [], np.empty([0, 0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
 		except:
 			print('Error: #-1132')
@@ -541,10 +533,6 @@ class Bus: #errors -1150 to -1174
 
 	def convertToInputTensor(self):
 		try:
-			# inputcols = ['nominal_LL_voltage', 'a', 'b', 'c', 'operational_status']
-			# inputdf = self.convertToDataFrame()
-			# inputdf = inputdf[inputcols]
-			# return inputdf.values.flatten()
 			return [], [], np.empty([0, 0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
 		except:
 			print('Error: #-1155')
@@ -552,11 +540,16 @@ class Bus: #errors -1150 to -1174
 
 	def convertToOutputTensor(self):
 		try:
-			# outputcols = ['a_PU_voltage', 'b_PU_voltage', 'c_PU_voltage', 'a_voltage_angle', 'b_voltage_angle', 'c_voltage_angle']
-			outputcols = ['a_PU_voltage', 'b_PU_voltage', 'c_PU_voltage']
+			output_list = []
+			output_col = ['a_PU_voltage', 'b_PU_voltage', 'c_PU_voltage']
+
+			for row in self.matrix:
+				for elem in output_col:
+					output_list.append('Bus_' + str(int(row[Bus.ID])) + '_' + elem)
+
 			outputdf = self.convertToDataFrame()
-			outputdf = outputdf[outputcols]
-			return [], outputdf.values.flatten()
+			outputdf = outputdf[output_col]
+			return output_list, outputdf.values.flatten()
 		except:
 			print('Error: #-1156')
 			return -1156
@@ -725,10 +718,6 @@ class VSource: #errors -1175 to -1199
 
 	def convertToInputTensor(self):
 		try:
-			# inputcols = ['nominal_LL_voltage', 'a', 'b', 'c', 'R0', 'R1', 'voltage_angle', 'X0', 'X1', 'operational_status']
-			# inputdf = self.convertToDataFrame()
-			# inputdf = inputdf[inputcols]
-			# return inputdf.values.flatten()
 			return [], [], np.empty([0, 0], dtype=np.float32).flatten(), np.empty([0,0], dtype=np.float32).flatten()
 		except:
 			print('Error: #-1182')
@@ -736,11 +725,16 @@ class VSource: #errors -1175 to -1199
 
 	def convertToOutputTensor(self):
 		try:
-			# outputcols = ['a_PU_voltage', 'b_PU_voltage', 'c_PU_voltage', 'a_voltage_angle', 'b_voltage_angle', 'c_voltage_angle', 'a_current', 'b_current', 'c_current', 'n_current', 'a_current_angle', 'b_current_angle', 'c_current_angle', 'n_current_angle']
-			outputcols = ['a_PU_voltage', 'b_PU_voltage', 'c_PU_voltage', 'a_current', 'b_current', 'c_current', 'n_current']
+			output_list = []
+			output_col = ['a_PU_voltage', 'b_PU_voltage', 'c_PU_voltage', 'a_current', 'b_current', 'c_current', 'n_current']
+
+			for row in self.matrix:
+				for elem in output_col:
+					output_list.append('VSource_' + str(int(row[VSource.ID])) + '_' + elem)
+
 			outputdf = self.convertToDataFrame()
-			outputdf = outputdf[outputcols]
-			return [], outputdf.values.flatten()
+			outputdf = outputdf[output_col]
+			return output_list, outputdf.values.flatten()
 		except:
 			print('Error: #-1183')
 			return -1183
@@ -953,23 +947,37 @@ class Generator: #errors -1200 to -1224
 
 	def convertToInputTensor(self):
 		try:
+			input_list_continuous = []
+			input_list_categorical = []
 			input_col_continuous = ['generation', 'power_factor_control']
-			input_col_categorization = ['operational_status']
+			input_col_categorical = ['operational_status']
+
+			for row in self.matrix:
+				for elem in input_col_continuous:
+					input_list_continuous.append('Generator_' + str(int(row[Generator.ID])) + '_' + elem)
+				for elem in input_col_categorical:
+					input_list_categorical.append('Generator_' + str(int(row[Generator.ID])) + '_' + elem)
+
 			inputdf = self.convertToDataFrame()
 			inputdf_continuous = inputdf[input_col_continuous]
-			inputdf_categorization = inputdf[input_col_categorization]
-			return [], [], inputdf_continuous.values.flatten(), inputdf_categorization.values.flatten()
+			inputdf_categorical = inputdf[input_col_categorical]
+			return input_list_continuous, input_list_categorical, inputdf_continuous.values.flatten(), inputdf_categorical.values.flatten()
 		except:
 			print('Error: #-1209')
 			return -1209
 
 	def convertToOutputTensor(self):
 		try:
-			# outputcols = ['a_PU_voltage', 'b_PU_voltage', 'c_PU_voltage', 'a_current', 'b_current', 'c_current', 'n_current', 'a_current_angle', 'b_current_angle', 'c_current_angle', 'n_current_angle']
-			outputcols = ['a_PU_voltage', 'b_PU_voltage', 'c_PU_voltage', 'a_current', 'b_current', 'c_current', 'n_current']
+			output_list = []
+			output_col = ['a_PU_voltage', 'b_PU_voltage', 'c_PU_voltage', 'a_current', 'b_current', 'c_current', 'n_current']
+			
+			for row in self.matrix:
+				for elem in output_col:
+					output_list.append('Generator_' + str(int(Generator.ID)) + '_' + elem)
+
 			outputdf = self.convertToDataFrame()
-			outputdf = outputdf[outputcols]
-			return [], outputdf.values.flatten()
+			outputdf = outputdf[output_col]
+			return output_list, outputdf.values.flatten()
 		except:
 			print('Error: #-1210')
 			return -1210
@@ -1214,23 +1222,37 @@ class Load: #errors -1225 to -1249
 
 	def convertToInputTensor(self):
 		try:
+			input_list_continuous = []
+			input_list_categorical = []
 			input_col_continuous = ['demand']
-			input_col_categorization = ['operational_status']
+			input_col_categorical = ['operational_status']
+
+			for row in self.matrix:
+				for elem in input_col_continuous:
+					input_list_continuous.append('Load_' + str(int(row[Load.ID])) + '_' + elem)
+				for elem in input_col_categorical:
+					input_list_categorical.append('Load_' + str(int(row[Load.ID])) + '_' + elem)
+
 			inputdf = self.convertToDataFrame()
 			inputdf_continuous = inputdf[input_col_continuous]
-			inputdf_categorization = inputdf[input_col_categorization]
-			return [], [], inputdf_continuous.values.flatten(), inputdf_categorization.values.flatten()
+			inputdf_categorical = inputdf[input_col_categorical]
+			return input_list_continuous, input_list_categorical, inputdf_continuous.values.flatten(), inputdf_categorical.values.flatten()
 		except:
 			print('Error: #-1234')
 			return -1234
 
 	def convertToOutputTensor(self):
 		try:
-			# outputcols = ['a_PU_voltage', 'b_PU_voltage', 'c_PU_voltage', 'a_voltage_angle', 'b_voltage_angle', 'c_voltage_angle', 'a_current', 'b_current', 'c_current', 'n_current', 'a_current_angle', 'b_current_angle', 'c_current_angle', 'n_current_angle']
-			outputcols = ['a_PU_voltage', 'b_PU_voltage', 'c_PU_voltage', 'a_current', 'b_current', 'c_current', 'n_current']
+			output_list = []
+			output_col = ['a_PU_voltage', 'b_PU_voltage', 'c_PU_voltage', 'a_current', 'b_current', 'c_current', 'n_current']
+			
+			for row in self.matrix:
+				for elem in output_col:
+					output_list.append('Load_' + str(int(row[Load.ID])) + '_' + elem)
+
 			outputdf = self.convertToDataFrame()
-			outputdf = outputdf[outputcols]
-			return [], outputdf.values.flatten()
+			outputdf = outputdf[output_col]
+			return output_list, outputdf.values.flatten()
 		except:
 			print('Error: #-1235')
 			return -1235
@@ -1450,23 +1472,37 @@ class SolarPV: #errors -1250 to -1274
 
 	def convertToInputTensor(self):
 		try:
+			input_list_continuous = []
+			input_list_categorical = []
 			input_col_continuous = ['irradiance', 'power_factor_control']
-			input_col_categorization = ['operational_status']
+			input_col_categorical = ['operational_status']
+
+			for row in self.matrix:
+				for elem in input_col_continuous:
+					input_list_continuous.append('SolarPV_' + str(int(row[SolarPV.ID])) + '_' + elem)
+				for elem in input_col_categorical:
+					input_list_categorical.append('SolarPV_' + str(int(row[SolarPV.ID])) + '_' + elem)
+
 			inputdf = self.convertToDataFrame()
 			inputdf_continuous = inputdf[input_col_continuous]
-			inputdf_categorization = inputdf[input_col_categorization]
-			return [], [], inputdf_continuous.values.flatten(), inputdf_categorization.values.flatten()
+			inputdf_categorical = inputdf[input_col_categorical]
+			return input_list_continuous, input_list_categorical, inputdf_continuous.values.flatten(), inputdf_categorical.values.flatten()
 		except:
 			print('Error: #-1259')
 			return -1259
 
 	def convertToOutputTensor(self):
 		try:
-			# outputcols = ['a_PU_voltage', 'b_PU_voltage', 'c_PU_voltage', 'a_voltage_angle', 'b_voltage_angle', 'c_voltage_angle', 'a_current', 'b_current', 'c_current', 'n_current', 'a_current_angle', 'b_current_angle', 'c_current_angle', 'n_current_angle']
-			outputcols = ['a_PU_voltage', 'b_PU_voltage', 'c_PU_voltage', 'a_current', 'b_current', 'c_current', 'n_current']
+			output_list = []
+			output_col = ['a_PU_voltage', 'b_PU_voltage', 'c_PU_voltage', 'a_current', 'b_current', 'c_current', 'n_current']
+			
+			for row in self.matrix:
+				for elem in output_col:
+					output_list.append('SolarPV_' + str(int(row[SolarPV.ID])) + '_' + elem)
+
 			outputdf = self.convertToDataFrame()
-			outputdf = outputdf[outputcols]
-			return [], outputdf.values.flatten()
+			outputdf = outputdf[output_col]
+			return output_list, outputdf.values.flatten()
 		except:
 			print('Error: #-1260')
 			return -1260
@@ -2105,21 +2141,33 @@ class Cable: #errors -1425 to -1449
 
 	def convertToInputTensor(self):
 		try:
-			input_col_categorization = ['operational_status_a', 'operational_status_b', 'operational_status_c']
+			input_list_continuous = []
+			input_list_categorical = []
+			input_col_categorical = ['operational_status_a', 'operational_status_b', 'operational_status_c']
+
+			for row in self.matrix:
+				for elem in input_col_categorical:
+					input_list_categorical.append('Cable_' + str(int(row[Cable.ID])) + '_' + elem)
+
 			inputdf = self.convertToDataFrame()
-			inputdf_categorization = inputdf[input_col_categorization]
-			return [], [], np.empty([0,0], dtype=np.float32).flatten(), inputdf_categorization.values.flatten()
+			inputdf_categorical = inputdf[input_col_categorical]
+			return input_list_continuous, input_list_categorical, np.empty([0,0], dtype=np.float32).flatten(), inputdf_categorical.values.flatten()
 		except:
 			print('Error: #-1432')
 			return -1432
 
 	def convertToOutputTensor(self):
 		try:
-			# outputcols = ['a_1_current_angle', 'b_1_current_angle', 'c_1_current_angle', 'n_1_current_angle', 'a_2_current_angle', 'b_2_current_angle', 'c_2_current_angle', 'n_2_current_angle', 'a_PU_capacity', 'b_PU_capacity', 'c_PU_capacity']
-			outputcols = ['a_PU_capacity', 'b_PU_capacity', 'c_PU_capacity']
+			output_list = []
+			output_col = ['a_PU_capacity', 'b_PU_capacity', 'c_PU_capacity']
+
+			for row in self.matrix:
+				for elem in output_col:
+					output_list.append('Cable_' + str(int(row[Cable.ID])) + '_' + elem)
+
 			outputdf = self.convertToDataFrame()
-			outputdf = outputdf[outputcols]
-			return [], outputdf.values.flatten()
+			outputdf = outputdf[output_col]
+			return output_list, outputdf.values.flatten()
 		except:
 			print('Error: #-1433')
 			return -1433
@@ -2653,23 +2701,37 @@ class TwoWindingTransformer: #errors -1475 to -1499
 
 	def convertToInputTensor(self):
 		try:
+			input_list_continuous = []
+			input_list_categorical = []
 			input_col_continuous = ['tap_1', 'tap_2']
-			input_col_categorization = ['operational_status']
+			input_col_categorical = ['operational_status']
+
+			for row in self.matrix:
+				for elem in input_col_continuous:
+					input_list_continuous.append('TwoWindingTransformer_' + str(int(row[TwoWindingTransformer.ID])) + '_' + elem)
+				for elem in input_col_categorical:
+					input_list_categorical.append('TwoWindingTransformer_' + str(int(row[TwoWindingTransformer.ID])) + '_' + elem)
+
 			inputdf = self.convertToDataFrame()
 			inputdf_continuous = inputdf[input_col_continuous]
-			inputdf_categorization = inputdf[input_col_categorization]
-			return [], [], inputdf_continuous.values.flatten(), inputdf_categorization.values.flatten()
+			inputdf_categorical = inputdf[input_col_categorical]
+			return input_list_continuous, input_list_categorical, inputdf_continuous.values.flatten(), inputdf_categorical.values.flatten()
 		except:
 			print('Error: #-1484')
 			return -1484
 
 	def convertToOutputTensor(self):
 		try:
-			# outputcols = ['a_1_current_angle', 'b_1_current_angle', 'c_1_current_angle', 'n_1_current_angle', 'a_2_current_angle', 'b_2_current_angle', 'c_2_current_angle', 'n_2_current_angle', 'PU_capacity']
-			outputcols = ['PU_capacity']
+			output_list = []
+			output_col = ['PU_capacity']
+
+			for row in self.matrix:
+				for elem in output_col:
+					output_list.append('TwoWindingTransformer_' + str(int(row[TwoWindingTransformer.ID])) + '_' + elem)
+
 			outputdf = self.convertToDataFrame()
-			outputdf = outputdf[outputcols]
-			return [], outputdf.values.flatten()
+			outputdf = outputdf[output_col]
+			return output_list, outputdf.values.flatten()
 		except:
 			print('Error: #-1485')
 			return -1485
@@ -2916,21 +2978,33 @@ class Capacitor: #errors -1500 to -1524
 
 	def convertToInputTensor(self):
 		try:
-			input_col_categorization = ['operational_status']
+			input_list_continuous = []
+			input_list_categorical = []
+			input_col_categorical = ['operational_status']
+
+			for row in self.matrix:
+				for elem in input_col_categorical:
+					input_list_categorical.append('Capacitor_' + str(int(row[Capacitor.ID])) + '_' + elem)
+
 			inputdf = self.convertToDataFrame()
-			inputdf_categorization = inputdf[input_col_categorization]
-			return [], [], np.empty([0,0], dtype=np.float32).flatten(), inputdf_categorization.values.flatten()
+			inputdf_categorical = inputdf[input_col_categorical]
+			return input_list_continuous, input_list_categorical, np.empty([0,0], dtype=np.float32).flatten(), inputdf_categorical.values.flatten()
 		except:
 			print('Error: #-1507')
 			return -1507
 
 	def convertToOutputTensor(self):
 		try:
-			# outputcols = ['a_1_current_angle', 'b_1_current_angle', 'c_1_current_angle', 'n_1_current_angle', 'a_2_current_angle', 'b_2_current_angle', 'c_2_current_angle', 'n_2_current_angle', 'PU_capacity']
-			outputcols = ['PU_capacity']
+			output_list = []
+			output_col = ['PU_capacity']
+
+			for row in self.matrix:
+				for elem in output_col:
+					output_list.append('Capacitor_' + str(int(row[Capacitor.ID])) + '_' + elem)
+
 			outputdf = self.convertToDataFrame()
-			outputdf = outputdf[outputcols]
-			return [], outputdf.values.flatten()
+			outputdf = outputdf[output_col]
+			return output_list, outputdf.values.flatten()
 		except:
 			print('Error: #-1508')
 			return -1508
