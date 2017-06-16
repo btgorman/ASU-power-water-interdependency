@@ -10,9 +10,9 @@ import random
 import csv
 import sys
 
-import EPANETClasses as ENC
-import OpenDSSClasses as ODC
-import interconnectionClasses as ICC
+import classes_water as ENC
+import classes_power as ODC
+import classes_interconnection as ICC
 
 from comtypes import automation
 import win32com.client
@@ -22,34 +22,34 @@ import win32com.client
 # makepy.main()
 
 def main(stoch_num):
-	csv_curve = pd.read_csv('./water_epanet/network-water/2000curve.csv', sep=',', header=1, index_col=None, dtype=np.float32)
-	csv_junction = pd.read_csv('./water_epanet/network-water/2100junction.csv', sep=',', header=1, index_col=None, dtype=np.float32)
-	csv_reservoir = pd.read_csv('./water_epanet/network-water/2101reservoir.csv', sep=',', header=1, index_col=None, dtype=np.float32)
-	csv_tank = pd.read_csv('./water_epanet/network-water/2102tank.csv', sep=',', header=1, index_col=None, dtype=np.float32)
-	csv_pipe = pd.read_csv('./water_epanet/network-water/2200pipe.csv', sep=',', header=1, index_col=None, dtype=np.float32)
-	csv_pump = pd.read_csv('./water_epanet/network-water/2201pump.csv', sep=',', header=1, index_col=None, dtype=np.float32)
-	csv_valve = pd.read_csv('./water_epanet/network-water/2202valve.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_curve = pd.read_csv('./data_water/network-water/2000curve.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_junction = pd.read_csv('./data_water/network-water/2100junction.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_reservoir = pd.read_csv('./data_water/network-water/2101reservoir.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_tank = pd.read_csv('./data_water/network-water/2102tank.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_pipe = pd.read_csv('./data_water/network-water/2200pipe.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_pump = pd.read_csv('./data_water/network-water/2201pump.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_valve = pd.read_csv('./data_water/network-water/2202valve.csv', sep=',', header=1, index_col=None, dtype=np.float32)
 
-	csv_xycurve = pd.read_csv('./power_opendss/network-power/1000xycurve.csv', sep=',', header=1, index_col=None, dtype=np.float32)
-	csv_regcontrol = pd.read_csv('./power_opendss/network-power/1100regcontrol.csv', sep=',', header=1, index_col=None, dtype=np.float32)
-	csv_wiredata = pd.read_csv('./power_opendss/network-power/1200wiredata.csv', sep=',', header=1, index_col=None, dtype=np.float32)
-	csv_linecode = pd.read_csv('./power_opendss/network-power/1201linecode.csv', sep=',', header=1, index_col=None, dtype=np.float32)
-	csv_bus = pd.read_csv('./power_opendss/network-power/1300bus.csv', sep=',', header=1, index_col=None, dtype=np.float32)
-	csv_vsource = pd.read_csv('./power_opendss/network-power/1301vsource.csv', sep=',', header=1, index_col=None, dtype=np.float32)
-	csv_generator = pd.read_csv('./power_opendss/network-power/1302generator.csv', sep=',', header=1, index_col=None, dtype=np.float32)
-	csv_load = pd.read_csv('./power_opendss/network-power/1303load.csv', sep=',', header=1, index_col=None, dtype=np.float32)
-	csv_solarpv = pd.read_csv('./power_opendss/network-power/1304solarpv.csv', sep=',', header=1, index_col=None, dtype=np.float32)
-	csv_windturbine = pd.read_csv('./power_opendss/network-power/1305windturbine.csv', sep=',', header=1, index_col=None, dtype=np.float32)
-	csv_directconnection = pd.read_csv('./power_opendss/network-power/1400directconnection.csv', sep=',', header=1, index_col=None, dtype=np.float32)
-	csv_cable = pd.read_csv('./power_opendss/network-power/1401cable.csv', sep=',', header=1, index_col=None, dtype=np.float32)
-	csv_overheadline = pd.read_csv('./power_opendss/network-power/1402overheadline.csv', sep=',', header=1, index_col=None, dtype=np.float32)
-	csv_twowindingtransformer = pd.read_csv('./power_opendss/network-power/1403twowindingtransformer.csv', sep=',', header=1, index_col=None, dtype=np.float32)
-	csv_capacitor = pd.read_csv('./power_opendss/network-power/1404capacitor.csv', sep=',', header=1, index_col=None, dtype=np.float32)
-	csv_reactor = pd.read_csv('./power_opendss/network-power/1405reactor.csv', sep=',', header=1, index_col=None, dtype=np.float32)
-	csv_allcolumns= pd.read_csv('./power_opendss/network-power/allcolumns.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_xycurve = pd.read_csv('./data_power/network-power/1000xycurve.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_regcontrol = pd.read_csv('./data_power/network-power/1100regcontrol.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_wiredata = pd.read_csv('./data_power/network-power/1200wiredata.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_linecode = pd.read_csv('./data_power/network-power/1201linecode.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_bus = pd.read_csv('./data_power/network-power/1300bus.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_vsource = pd.read_csv('./data_power/network-power/1301vsource.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_generator = pd.read_csv('./data_power/network-power/1302generator.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_load = pd.read_csv('./data_power/network-power/1303load.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_solarpv = pd.read_csv('./data_power/network-power/1304solarpv.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_windturbine = pd.read_csv('./data_power/network-power/1305windturbine.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_directconnection = pd.read_csv('./data_power/network-power/1400directconnection.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_cable = pd.read_csv('./data_power/network-power/1401cable.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_overheadline = pd.read_csv('./data_power/network-power/1402overheadline.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_twowindingtransformer = pd.read_csv('./data_power/network-power/1403twowindingtransformer.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_capacitor = pd.read_csv('./data_power/network-power/1404capacitor.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_reactor = pd.read_csv('./data_power/network-power/1405reactor.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_allcolumns= pd.read_csv('./data_power/network-power/allcolumns.csv', sep=',', header=1, index_col=None, dtype=np.float32)
 
-	csv_pumpload = pd.read_csv('./interconnection/network-interconnection/9000pump-load.csv', sep=',', header=1, index_col=None, dtype=np.float32)
-	csv_tankgenerator = pd.read_csv('./interconnection/network-interconnection/9001tank-generator.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_pumpload = pd.read_csv('./data_interconnection/network-interconnection/9000pump-load.csv', sep=',', header=1, index_col=None, dtype=np.float32)
+	csv_tankgenerator = pd.read_csv('./data_interconnection/network-interconnection/9001tank-generator.csv', sep=',', header=1, index_col=None, dtype=np.float32)
 
 	object_curve = ENC.Curve(csv_curve)
 	object_junction = ENC.Junction(csv_junction)
@@ -185,7 +185,7 @@ def main(stoch_num):
 						object.randomSwitching()
 
 	def run_EPANET():
-		filedir = 'C:/Users/brandon.t.gorman/Documents/RISE Code/water_epanet/en-inputs/en-input.inp'
+		filedir = 'C:/Users/brandon.t.gorman/Documents/RISE Code/data_water/en-inputs/en-input.inp'
 		with open(filedir, 'w', newline='\n') as csvfile:
 			writer = csv.writer(csvfile, delimiter=' ')
 			templist = ['[TITLE]']
@@ -294,11 +294,11 @@ def main(stoch_num):
 			templist=['[END]']
 			writer.writerow(templist)
 
-		epalib = ct.cdll.LoadLibrary('C:/Users/brandon.t.gorman/Documents/RISE Code/water_epanet/epanet2mingw64.dll')
+		epalib = ct.cdll.LoadLibrary('C:/Users/brandon.t.gorman/Documents/RISE Code/data_water/epanet2mingw64.dll')
 
 		# Byte objects
 		en_input_file = ct.c_char_p(filedir.encode('utf-8'))
-		en_report_file = ct.c_char_p('C:/Users/brandon.t.gorman/Documents/RISE Code/water_epanet/en-outputs/out.rpt'.encode('utf-8'))
+		en_report_file = ct.c_char_p('C:/Users/brandon.t.gorman/Documents/RISE Code/data_water/en-outputs/out.rpt'.encode('utf-8'))
 		en_byte_file = ct.c_char_p(''.encode('utf-8'))
 
 		# Send strings as char* to the epalib function
@@ -423,11 +423,11 @@ def main(stoch_num):
 	input_tensor_categorical = np.concatenate((input_tensor_categorical, input_tensor_categorical1), axis=0)
 	output_tensor = np.concatenate((output_tensor, output_tensor1), axis=0)
 
-	with open('C:/Users/brandon.t.gorman/Documents/power_opendss/input_tensor_continuous.csv', 'ab') as f:
+	with open('C:/Users/brandon.t.gorman/Documents/data_power/input_tensor_continuous.csv', 'ab') as f:
 		np.savetxt(f, input_tensor_continuous[None, :], fmt='%0.6f', delimiter=' ', newline='\n')
-	with open('C:/Users/brandon.t.gorman/Documents/power_opendss/input_tensor_categorical.csv', 'ab') as f:
+	with open('C:/Users/brandon.t.gorman/Documents/data_power/input_tensor_categorical.csv', 'ab') as f:
 		np.savetxt(f, input_tensor_categorical[None, :], fmt='%0.6f', delimiter=' ', newline='\n')
-	with open('C:/Users/brandon.t.gorman/Documents/power_opendss/output_tensor.csv', 'ab') as f:
+	with open('C:/Users/brandon.t.gorman/Documents/data_power/output_tensor.csv', 'ab') as f:
 		np.savetxt(f, output_tensor[None, :], fmt='%0.6f', delimiter=' ', newline='\n')
 
 if __name__ == '__main__':
