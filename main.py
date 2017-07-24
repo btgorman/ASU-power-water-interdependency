@@ -31,7 +31,7 @@ import win32com.client
 # sys.argv = ['makepy', 'OpenDSSEngine.DSS']
 # makepy.main()
 
-def main(stoch_num):
+def main(stoch_num, write_cols):
 	os_username = os.getlogin()
 
 	csv_curve = pd.read_csv('./data_water/network-water/2000curve.csv', sep=',', header=1, index_col=None, dtype=np.float32)
